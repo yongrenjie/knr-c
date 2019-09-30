@@ -9,7 +9,8 @@
 #define NUMBER '0' /* signal that a number was found */
 #define VARIABLE '1'
 #define OTHER_OPERATION '2'
-#define END_OF_LINE '3'
+#define END_OF_FILE '3'
+#define NEWLINE '4'
 
 int nopop = 0;
 double most_recent;
@@ -41,11 +42,10 @@ int main(void)
     printf("define lowercase single-letter variables with \"a 2 def\";\n");
     printf("the variable \"A\" stores the last shown answer\n");
 
-    while((len = my_getline(l, MAXLINE)) != EOF)
+    while((len = my_getline(l, MAXLINE)) != 0)
     {
-        while((type = getop(l, s) != END_OF_LINE))
+        while((type = getop(l, s)) != END_OF_FILE)
         {
-            printf("type is %d\n", type);
             switch(type)
             {
                 case NUMBER:
@@ -94,7 +94,7 @@ int main(void)
                         printf("error: unknown command %s\n", s);
                     }
                     break;
-                case END_OF_LINE:
+                case NEWLINE:
                     if (!nopop) {
                         most_recent = pop();
                         printf("\t%.8g\n", most_recent);
@@ -163,8 +163,9 @@ double val[MAXVAL]; /* value stack */
 /* push: push f onto value stack */
 void push(double f)
 {
-    if(sp < MAXVAL)
+    if(sp < MAXVAL) {
         val[sp++] = f;
+    }
     else
         printf("error: stack full, can't push %g\n", f);
 }
@@ -240,6 +241,16 @@ int getop(char f[], char s[])
     // places the first operator / operand into s. It then needs to slice off
     // s from the beginning of f.
 
+    // first we need to check if there's anything inside apart from a newline
+    if (f[0] == '\n') {
+        f[0] = '\0';
+        return NEWLINE;
+    }
+    if (f[0] == EOF) {
+        f[0] = '\0';
+        return END_OF_FILE;
+    }
+
     int i; // the index of f
     char c; // the character being read
     i = 0;
@@ -266,17 +277,11 @@ int getop(char f[], char s[])
     // now f and s should be set correctly
     // we now need to determine what value getop() should return to the main routine
 
-    printf("s is: %s\n", s);
-    printf("strlen(s) is: %d\n", strlen(s));
-    
-    // TODO: need to suppress the extra output when sending an EOF 
-
     // if s is empty, it means we reached the end of the line
-    if (strlen(s) == 0) return END_OF_LINE;
+    if (strlen(s) == 0) return END_OF_FILE;
 
     // if s is an alphabetical string
     if (isalpha(s[0])) {
-        printf("isalpha\n");
         if (strlen(s) == 1) return VARIABLE;
         else return OTHER_OPERATION;
     }
@@ -287,7 +292,6 @@ int getop(char f[], char s[])
         else return s[0];
     }
     
-    printf("isa\n");
     // otherwise it's a number
     return NUMBER;
 }
