@@ -1,12 +1,12 @@
 #include <stdio.h>
 
-#define swap(t, x, y) t z = x ; x = y ; y = z
+#define SWAP(t, x, y) do { t variable ## x ## y = x ; x = y ; y = variable ## x ## y; } while(0)
 
 int main (void)
 {
     int a = 1;
     int b = 2;
-    swap(int, a, b);
+    SWAP(int, a, b);
     printf("%d\n", a);
     printf("%d\n", b);
     return 0;
