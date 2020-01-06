@@ -2,7 +2,7 @@
 #include <string.h>
 #include "my_getline.h"
 
-#define MAXLINES 5000
+#define MAXLINES 5000000
 char *lineptr[MAXLINES];
 
 int parseargs(int c, char **v, int *n, int *r) ;
