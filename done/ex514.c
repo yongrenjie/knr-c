@@ -35,7 +35,7 @@ int main (int argc, char *argv[])
         return 0;
     }
     else {
-        printf("input too big to sort\n");
+        printf("Input too big to sort\n");
         return 1;
     }
 }
@@ -88,8 +88,9 @@ int readlines(char *lineptr[])
 
     nlines = 0;
     while ((len = my_getline(line, MAXLEN)) > 0)
-        if ((p = (char *) malloc(len * sizeof(char))) == NULL)
+        if (nlines >= MAXLINES || (p = (char *) malloc(len * sizeof(char))) == NULL){
             return -1; /* insufficient memory */
+        }
         else {
             line[len - 1] = '\0';
             strcpy(p, line);
