@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "my_getline.h"
 
 #define MAXCHARS 10000
 #define DEFAULT_N 10
@@ -74,7 +73,8 @@ int main (int argc, char *argv[])
      * which we can do easily with the counter. This can be done easily using modulo arithmetic. */
 
     char lines[n][MAXCHARS]; /* there is still a restriction on maximum line length (my_getline has this restriction too) */
-    for (int i = 0; i < n; i++) {
+    int i;
+    for (i = 0; i < n; i++) {
         strcpy(lines[i], ""); /* initialise everything to empty string, important if input has less than n lines */
         /* I suspect this is better accomplished using malloc, but we haven't learnt it yet. */
     }
@@ -95,7 +95,8 @@ int main (int argc, char *argv[])
 /* printlines: prints the last n lines of the input */
 void printlines (char (*lines)[MAXCHARS], int n, int nlines)
 {
-    for (int i = 0; i < n; i++) {
+    int i;
+    for (i = 0; i < n; i++) {
         printf("%s", *(lines + ((nlines + i) % n)));
     }
 }
