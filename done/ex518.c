@@ -18,11 +18,15 @@ char out[1000];
 int main (void)
 {
     while (gettoken() != EOF) {
+        if (tokentype == '\n') continue; /* skip empty input */
         strcpy(datatype, token);
         out[0] = '\0';
         dcl(); /* parse rest of line */
-        if (tokentype != '\n')
+        if (tokentype != '\n') {
             printf("syntax error\n");
+            while (gettoken() != '\n') ; /* wait until a newline is found */
+            continue; /* skip the last output if input wasn't correct */
+        }
         printf("%s: %s %s\n", name, out, datatype);
     }
     return 0;
@@ -31,6 +35,7 @@ int main (void)
 /* dcl: parse a declarator */
 void dcl (void)
 {
+    /* printf("calling dcl\n"); */
     int ns;
     for (ns = 0; gettoken() == '*' ; ) { /* count *'s */
         ns++;
@@ -44,15 +49,18 @@ void dcl (void)
 /* dirdcl: parse a direct declarator */
 void dirdcl (void)
 {
+    /* printf("calling dirdcl\n"); */
     int type;
     if (tokentype == '(') {   /* ( dcl ) */
         dcl();
         if (tokentype != ')') {
             printf("Error: missing )\n");
+            return; /* stop looking for tokens */
+            }
         }
-    }
     else if (tokentype == NAME) { /* variable name */
         strcpy(name, token);
+        /* printf("strcpying %s into name\n", token); */
     }
     else {
         printf("Error: expected name or (dcl)\n");
@@ -74,21 +82,25 @@ int gettoken (void)
     int c, getch(void);
     void ungetch(int);
     char *p = token;
+    /* printf("calling gettoken\n"); */
 
     while ((c = getch()) == ' ' || c == '\t') ; /* skip whitespace */
     if (c == '(') {
         if ((c = getch()) == ')') {
             strcpy(token, "()");
+            /* printf("returning tokentype PARENS\n"); */
             return tokentype = PARENS;
         }
         else {
             ungetch(c);
+            /* printf("returning tokentype (\n"); */
             return tokentype = '(';
         }
     }
     else if (c == '[') {
         for (*p++ = c; (*p++ = getch()) != ']'; ) ;
         *p = '\0';
+        /* printf("returning tokentype BRACKETS\n"); */
         return tokentype = BRACKETS;
     }
     else if (isalpha(c)) {
@@ -96,9 +108,11 @@ int gettoken (void)
             *p++ = c;
         *p = '\0';
         ungetch(c);
+        /* printf("returning tokentype NAME\n"); */
         return tokentype = NAME;
     }
     else
+        /* printf("returning tokentype c = %c\n", c); */
         return tokentype = c;
 }
 
