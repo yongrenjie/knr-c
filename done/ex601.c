@@ -90,7 +90,6 @@ int binsearch(char *word, struct key tab[], int n)
     return -1;
 }
 
-
 int getword(char *word, int lim)
 {
     int c, prevc, getch(void);
@@ -101,14 +100,28 @@ int getword(char *word, int lim)
 
     if (c != EOF) {
         *w++ = c;
+        /* check for character opening */
+        if (c == '\'') {
+            /* skip until the next '"' that isn't escaped */
+            while (1) {
+                c = getch();
+                if (c == '\\') {
+                    c = getch(); /* skip over one more character */
+                    continue;
+                }
+                if (c == '\'') break;
+            }
+        }
         /* check for string opening */
         if (c == '"') {
             /* skip until the next '"' that isn't escaped */
             while (1) {
-                prevc = c;
                 c = getch();
-                if ((prevc != '\\') && (c == '"'))
-                    break;
+                if (c == '\\') {
+                    c = getch(); /* skip over one more character */
+                    continue;
+                }
+                if (c == '"') break;
             }
         }
         /* check for comment opening */
@@ -143,7 +156,6 @@ int getword(char *word, int lim)
     *w = '\0';
     return word[0];
 }
-
 
 #define BUFSIZE 100
 
