@@ -169,9 +169,21 @@ struct nlist *install(char *name, char *defn)
 void uninstall(char *name)
 {
     struct nlist *np;
+    unsigned int hashval;
+    hashval = hash(name);
+
     if ((np = lookup(name)) == NULL) return; /* silly person tried to undef something that wasn't defined */
     else {
-        hashtab[hash(name)] = np->next;
+        if (hashtab[hashval] == np) { /* if hashtab[hashval] points directly to np */
+            hashtab[hashval] = np->next;
+        }
+        else { /* find the thing that points to np */
+            struct nlist *t = hashtab[hashval];
+            while (t->next != np) {
+                t = t->next;
+            }
+            t->next = np->next;
+        }
         free((void *) np);
     }
 }
