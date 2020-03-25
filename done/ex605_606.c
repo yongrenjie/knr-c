@@ -7,7 +7,8 @@
 /* includes the undef function from ex605 */
 /* I tested this and the preprocessed code that it spat out could be compiled again - success! */
 /* Actually, an ifdef/ifndef/endif directive should be not too difficult to code because
- * all the bits and pieces are already in place, so it's just about writing a high-level function */
+ * all the bits and pieces are already in place, so it's just about writing a high-level function.
+ * But an #else or #elif bit might be difficult */
 
 #define MAXWORD 500
 
@@ -168,7 +169,6 @@ struct nlist *install(char *name, char *defn)
 void uninstall(char *name)
 {
     struct nlist *np;
-    unsigned int hashval;
     if ((np = lookup(name)) == NULL) return; /* silly person tried to undef something that wasn't defined */
     else {
         hashtab[hash(name)] = np->next;
