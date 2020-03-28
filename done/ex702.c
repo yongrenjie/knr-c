@@ -10,7 +10,7 @@ int main(void)
         /* count characters since last newline */
         if (c != '\n') ccount++;
         else ccount = 0;
-        if (ccount == 80) { /* this will totally ruin your Python code but at least it's PEP8 compliant */
+        if (ccount >= 80) { /* this will totally ruin your Python code but at least it's PEP8 compliant */
             putchar('\n');
             ccount = 0;
         }
@@ -18,7 +18,7 @@ int main(void)
         /* print the character */
         int printable = 0;
         char *p = s;
-        while (p++) { 
+        while (*p++) { 
             if (c == *p) {
                 printable = 1;
                 break;
@@ -26,6 +26,9 @@ int main(void)
         }
 
         if (printable) putchar(c);
-        else printf("%02X ", c);
+        else {
+            printf("%02X ", c);
+            ccount += 3;
+        }
     }
 }
