@@ -2,6 +2,12 @@
 #include <string.h>
 #include <ctype.h>
 
+/* Bug: doesn't work with const pointers, e.g.
+ *     int * const p;
+ * declares a const pointer (read-only pointer) to an int
+ * On the bright side, it just says "syntax error" and recovers
+ * decently after that. */
+
 #define MAXTOKEN 100
 enum { NAME, PARENS, BRACKETS };
 
